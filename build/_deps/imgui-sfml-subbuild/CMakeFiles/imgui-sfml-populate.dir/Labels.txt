@@ -1,0 +1,14 @@
+# Target labels
+ imgui-sfml-populate
+# Source files and their labels
+/home/skate/Dev/Projects/offline_garbage/graphics/sharagaImgUI/build/_deps/imgui-sfml-subbuild/CMakeFiles/imgui-sfml-populate
+/home/skate/Dev/Projects/offline_garbage/graphics/sharagaImgUI/build/_deps/imgui-sfml-subbuild/CMakeFiles/imgui-sfml-populate.rule
+/home/skate/Dev/Projects/offline_garbage/graphics/sharagaImgUI/build/_deps/imgui-sfml-subbuild/CMakeFiles/imgui-sfml-populate-complete.rule
+/home/skate/Dev/Projects/offline_garbage/graphics/sharagaImgUI/build/_deps/imgui-sfml-subbuild/imgui-sfml-populate-prefix/src/imgui-sfml-populate-stamp/imgui-sfml-populate-build.rule
+/home/skate/Dev/Projects/offline_garbage/graphics/sharagaImgUI/build/_deps/imgui-sfml-subbuild/imgui-sfml-populate-prefix/src/imgui-sfml-populate-stamp/imgui-sfml-populate-configure.rule
+/home/skate/Dev/Projects/offline_garbage/graphics/sharagaImgUI/build/_deps/imgui-sfml-subbuild/imgui-sfml-populate-prefix/src/imgui-sfml-populate-stamp/imgui-sfml-populate-download.rule
+/home/skate/Dev/Projects/offline_garbage/graphics/sharagaImgUI/build/_deps/imgui-sfml-subbuild/imgui-sfml-populate-prefix/src/imgui-sfml-populate-stamp/imgui-sfml-populate-install.rule
+/home/skate/Dev/Projects/offline_garbage/graphics/sharagaImgUI/build/_deps/imgui-sfml-subbuild/imgui-sfml-populate-prefix/src/imgui-sfml-populate-stamp/imgui-sfml-populate-mkdir.rule
+/home/skate/Dev/Projects/offline_garbage/graphics/sharagaImgUI/build/_deps/imgui-sfml-subbuild/imgui-sfml-populate-prefix/src/imgui-sfml-populate-stamp/imgui-sfml-populate-patch.rule
+/home/skate/Dev/Projects/offline_garbage/graphics/sharagaImgUI/build/_deps/imgui-sfml-subbuild/imgui-sfml-populate-prefix/src/imgui-sfml-populate-stamp/imgui-sfml-populate-test.rule
+/home/skate/Dev/Projects/offline_garbage/graphics/sharagaImgUI/build/_deps/imgui-sfml-subbuild/imgui-sfml-populate-prefix/src/imgui-sfml-populate-stamp/imgui-sfml-populate-update.rule

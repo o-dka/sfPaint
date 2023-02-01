@@ -1,0 +1,3 @@
+/home/skate/Dev/Projects/offline_garbage/graphics/sharagaImgUI/build/_deps/imgui-subbuild/CMakeFiles/imgui-populate.dir
+/home/skate/Dev/Projects/offline_garbage/graphics/sharagaImgUI/build/_deps/imgui-subbuild/CMakeFiles/edit_cache.dir
+/home/skate/Dev/Projects/offline_garbage/graphics/sharagaImgUI/build/_deps/imgui-subbuild/CMakeFiles/rebuild_cache.dir
