@@ -3,7 +3,6 @@
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
-#include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Mouse.hpp>
@@ -60,9 +59,9 @@ int main() {
             } ImGui::EndMainMenuBar();
         }
         ImGui::Begin("Brush Controls");
-        ImGui::SliderInt("Red", &colors[0], 1, 255);
-        ImGui::SliderInt("Green", &colors[1], 1, 255);
-        ImGui::SliderInt("Blue", &colors[2], 1, 255);
+        ImGui::SliderInt("Red", &colors[0], 0, 255);
+        ImGui::SliderInt("Green", &colors[1], 0, 255);
+        ImGui::SliderInt("Blue", &colors[2], 0, 255);
         ImGui::SliderInt("Size", &brush_size, 1, 100);
         ImGui::End();
         
@@ -74,26 +73,40 @@ int main() {
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) 
         {
             // drawing things
-            sf::Uint8 pixels[brush_size * brush_size * 4]= {
-                0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
-                0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000
-            };
-            bckgrnd.update(pixels,               //
-                           unsigned(brush_size), //
-                           unsigned(brush_size), //
-                           unsigned(mousepos.x) + 1, unsigned(mousepos.y) + 10);
-            bckgrnd_sprt.setTexture(bckgrnd);
+            int  pixel_arr_sz=(brush_size * brush_size) * 4 ;
+
+            sf::Uint8 pixels[pixel_arr_sz];
+            for (int i = 0; i != pixel_arr_sz; i++) {
+                pixels[i] = brush.getFillColor().r;
+                pixels[i + 1] = brush.getFillColor().g;
+                pixels[i + 2] = brush.getFillColor().b;
+                if (brush.getFillColor().r > 0)
+                    pixels[i + 3] = brush.getFillColor().r;
+                if (brush.getFillColor().g  > 0  )
+                    pixels[i + 3] = brush.getFillColor().g;
+                if(brush.getFillColor().b > 0)
+                    pixels[i + 3] = brush.getFillColor().b;
+            }
+            
+            if ((float(mousepos.x) < bckgrnd_box.getSize().x) &&
+                (float(mousepos.y) < bckgrnd_box.getSize().y)) {
+                bckgrnd.update(pixels,               //
+                               unsigned(brush_size), //
+                               unsigned(brush_size), //
+                               unsigned(mousepos.x) + 1,
+                               unsigned(mousepos.y) + 10);
+                bckgrnd_sprt.setTexture(bckgrnd);
+            }
         }
         bckgrnd_box.setSize(sf::Vector2f(bkc_x, bkc_y));
         bckgrnd_sprt.setTextureRect(sf::IntRect(0, 0, int(bkc_x), int(bkc_y)));
         window.clear();
         window.draw(bckgrnd_box);
-
         window.draw(bckgrnd_sprt);
         if ((float(mousepos.x) < bckgrnd_box.getSize().x) &&
             (float(mousepos.y) < bckgrnd_box.getSize().y)) {
             // Brush things :P
-            brush.setPosition(sf::Vector2f(mousepos) - sf::Vector2f(10.f, 8.f));
+            brush.setPosition(sf::Vector2f(mousepos) + sf::Vector2f(10.f, 1.f));
             brush.setFillColor(sf::Color(colors[0], colors[1], colors[2]));
             brush.setSize(sf::Vector2f(float(brush_size), float(brush_size)));
             window.draw(brush);
