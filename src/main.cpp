@@ -9,10 +9,15 @@
 #include <imgui-SFML.h>
 #include <imgui.h>
 
-float bkc_x = 100;
-float bkc_y = 100;
-int brush_size = 2;
-int colors[3] = {0, 120, 0};
+float bkc_x = 200;
+float bkc_y = 350;
+int brush_size = 10;
+int colors[4]  {
+                0      // R
+                ,120   // G
+                ,0     // B
+                ,100   // a (transparency)
+};
 int main() {
     sf::Vector2i mousepos;
     sf::RectangleShape brush;
@@ -62,6 +67,7 @@ int main() {
         ImGui::SliderInt("Red", &colors[0], 0, 255);
         ImGui::SliderInt("Green", &colors[1], 0, 255);
         ImGui::SliderInt("Blue", &colors[2], 0, 255);
+        ImGui::SliderInt("Aplha", &colors[3], 1, 255);
         ImGui::SliderInt("Size", &brush_size, 1, 100);
         ImGui::End();
         
@@ -76,18 +82,13 @@ int main() {
             int  pixel_arr_sz=(brush_size * brush_size) * 4 ;
 
             sf::Uint8 pixels[pixel_arr_sz];
-            for (int i = 0; i != pixel_arr_sz; i++) {
-                pixels[i] = brush.getFillColor().r;
-                pixels[i + 1] = brush.getFillColor().g;
-                pixels[i + 2] = brush.getFillColor().b;
-                if (brush.getFillColor().r > 0)
-                    pixels[i + 3] = brush.getFillColor().r;
-                if (brush.getFillColor().g  > 0  )
-                    pixels[i + 3] = brush.getFillColor().g;
-                if(brush.getFillColor().b > 0)
-                    pixels[i + 3] = brush.getFillColor().b;
+            for (int i = 0; i != pixel_arr_sz - 4; i++) {
+                pixels[i] = colors[0];
+                pixels[i + 1] = colors[1];
+                pixels[i + 2] = colors[2];
+                pixels[i + 3] = colors[3];
             }
-            
+
             if ((float(mousepos.x) < bckgrnd_box.getSize().x) &&
                 (float(mousepos.y) < bckgrnd_box.getSize().y)) {
                 bckgrnd.update(pixels,               //
@@ -107,7 +108,7 @@ int main() {
             (float(mousepos.y) < bckgrnd_box.getSize().y)) {
             // Brush things :P
             brush.setPosition(sf::Vector2f(mousepos) + sf::Vector2f(10.f, 1.f));
-            brush.setFillColor(sf::Color(colors[0], colors[1], colors[2]));
+            brush.setFillColor(sf::Color(colors[0], colors[1], colors[2],colors[3]));
             brush.setSize(sf::Vector2f(float(brush_size), float(brush_size)));
             window.draw(brush);
         }
