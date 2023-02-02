@@ -12,7 +12,7 @@
 
 float bkc_x = 100;
 float bkc_y = 100;
-float brush_size = 10.f;
+int brush_size = 2;
 int colors[3] = {0, 120, 0};
 int main() {
     sf::Vector2i mousepos;
@@ -63,7 +63,7 @@ int main() {
         ImGui::SliderInt("Red", &colors[0], 1, 255);
         ImGui::SliderInt("Green", &colors[1], 1, 255);
         ImGui::SliderInt("Blue", &colors[2], 1, 255);
-        ImGui::SliderFloat("Size", &brush_size, 1.f, 100.f);
+        ImGui::SliderInt("Size", &brush_size, 1, 100);
         ImGui::End();
         
         ImGui::Begin("Canvas Controls");
@@ -74,16 +74,14 @@ int main() {
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) 
         {
             // drawing things
-            sf::Uint8 *pixels = new sf::Uint8[ 
-                int(
-                    (brush_size * brush_size) 
-                )
-                * 4
-                ];
-            // for (int i = int(brush_size);i > 0; i--)
-                bckgrnd.update(
-                    pixels, unsigned(brush_size), unsigned(brush_size), //
-                    unsigned(mousepos.x) + 1, unsigned(mousepos.y) + 10);
+            sf::Uint8 pixels[brush_size * brush_size * 4]= {
+                0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000,
+                0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000
+            };
+            bckgrnd.update(pixels,               //
+                           unsigned(brush_size), //
+                           unsigned(brush_size), //
+                           unsigned(mousepos.x) + 1, unsigned(mousepos.y) + 10);
             bckgrnd_sprt.setTexture(bckgrnd);
         }
         bckgrnd_box.setSize(sf::Vector2f(bkc_x, bkc_y));
@@ -97,9 +95,8 @@ int main() {
             // Brush things :P
             brush.setPosition(sf::Vector2f(mousepos) - sf::Vector2f(10.f, 8.f));
             brush.setFillColor(sf::Color(colors[0], colors[1], colors[2]));
-            brush.setSize(sf::Vector2f(brush_size,brush_size));
+            brush.setSize(sf::Vector2f(float(brush_size), float(brush_size)));
             window.draw(brush);
-            // window.draw(shape);
         }
         ImGui::SFML::Render(window);
 
