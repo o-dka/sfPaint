@@ -13,10 +13,10 @@
 float bkc_x = 100;
 float bkc_y = 100;
 float brush_size = 10.f;
-int colors[3] = {255, 120, 120};
+int colors[3] = {0, 120, 0};
 int main() {
     sf::Vector2i mousepos;
-    sf::CircleShape brush;
+    sf::RectangleShape brush;
     sf::Texture bckgrnd;
     sf::RectangleShape bckgrnd_box(sf::Vector2f(bkc_x, bkc_y));
     sf::Sprite bckgrnd_sprt;
@@ -29,7 +29,7 @@ int main() {
                         sf::VideoMode(1280, 720),
                         "Crappy paint clone , has only one brush"
                         );
-    window.setFramerateLimit(60);
+    window.setFramerateLimit(120);
     ImGui::SFML::Init(window);
     sf::Clock deltaClock;
     while (window.isOpen()) {
@@ -75,14 +75,15 @@ int main() {
         {
             // drawing things
             sf::Uint8 *pixels = new sf::Uint8[ 
-                (
-                    int(brush_size) * 4
+                int(
+                    (brush_size * brush_size) 
                 )
                 * 4
                 ];
-            bckgrnd.update(pixels, unsigned (brush_size), unsigned(brush_size/2),
-                           unsigned(mousepos.x) - 10,
-                           unsigned(mousepos.y) - 10);
+            // for (int i = int(brush_size);i > 0; i--)
+                bckgrnd.update(
+                    pixels, unsigned(brush_size), unsigned(brush_size), //
+                    unsigned(mousepos.x) + 1, unsigned(mousepos.y) + 10);
             bckgrnd_sprt.setTexture(bckgrnd);
         }
         bckgrnd_box.setSize(sf::Vector2f(bkc_x, bkc_y));
@@ -96,7 +97,7 @@ int main() {
             // Brush things :P
             brush.setPosition(sf::Vector2f(mousepos) - sf::Vector2f(10.f, 8.f));
             brush.setFillColor(sf::Color(colors[0], colors[1], colors[2]));
-            brush.setRadius(brush_size);
+            brush.setSize(sf::Vector2f(brush_size,brush_size));
             window.draw(brush);
             // window.draw(shape);
         }

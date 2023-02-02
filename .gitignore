@@ -45,6 +45,5 @@ _deps
 *.app
 
 # Some dirs that I dont want to share
-.vscode
 build/*
 
