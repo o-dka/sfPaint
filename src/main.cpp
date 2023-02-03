@@ -1,5 +1,6 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/View.hpp>
+#include <SFML/System/FileInputStream.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
@@ -27,12 +28,12 @@ int main() {
     if (!bckgrnd.loadFromFile("build/Untitled.png")) {
         return 1;
     }
-    bckgrnd.setSrgb(false);
+    // bckgrnd.setSrgb(false);
     bckgrnd_sprt.setTexture(bckgrnd);
     
     sf::RenderWindow window(sf::VideoMode(1280, 720),
                             "Crappy paint clone , has only one brush");
-    window.setFramerateLimit(60);
+    window.setFramerateLimit(120);
     ImGui::SFML::Init(window);
     sf::Clock deltaClock;
     while (window.isOpen()) {
@@ -49,7 +50,9 @@ int main() {
         if (ImGui::BeginMainMenuBar()) {
             if (ImGui::BeginMenu("File")) {
                 // File interaction
-                if (ImGui::MenuItem("Save")){ /* something about saving an image and stuff*/}
+                if (ImGui::MenuItem("Save")){  // a save button that saves, wow!
+
+                }
                 if(ImGui::MenuItem("Quit")){ //a quit button!
                     window.close();
                 }
