@@ -27,13 +27,12 @@ int main() {
     if (!bckgrnd.loadFromFile("build/Untitled.png")) {
         return 1;
     }
+    bckgrnd.setSrgb(false);
     bckgrnd_sprt.setTexture(bckgrnd);
-
-    sf::RenderWindow window(
-                        sf::VideoMode(1280, 720),
-                        "Crappy paint clone , has only one brush"
-                        );
-    window.setFramerateLimit(120);
+    
+    sf::RenderWindow window(sf::VideoMode(1280, 720),
+                            "Crappy paint clone , has only one brush");
+    window.setFramerateLimit(60);
     ImGui::SFML::Init(window);
     sf::Clock deltaClock;
     while (window.isOpen()) {
@@ -50,7 +49,7 @@ int main() {
         if (ImGui::BeginMainMenuBar()) {
             if (ImGui::BeginMenu("File")) {
                 // File interaction
-                if (ImGui::MenuItem("Save") ){ /* something about saving an image and stuff*/}
+                if (ImGui::MenuItem("Save")){ /* something about saving an image and stuff*/}
                 if(ImGui::MenuItem("Quit")){ //a quit button!
                     window.close();
                 }
@@ -82,7 +81,7 @@ int main() {
             int  pixel_arr_sz=(brush_size * brush_size) * 4 ;
 
             sf::Uint8 pixels[pixel_arr_sz];
-            for (int i = 0; i != pixel_arr_sz - 4; i++) {
+            for (int i = 0; i != pixel_arr_sz -4; i+=4) {
                 pixels[i] = colors[0];
                 pixels[i + 1] = colors[1];
                 pixels[i + 2] = colors[2];
