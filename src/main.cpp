@@ -1,6 +1,5 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/View.hpp>
-#include <SFML/System/FileInputStream.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
@@ -9,6 +8,19 @@
 #include <SFML/Window/Mouse.hpp>
 #include <imgui-SFML.h>
 #include <imgui.h>
+#include <experimental/filesystem>
+#include <string>
+namespace fs= std::experimental::filesystem;
+void file_save(sf::Texture &t){
+    std::string filename  = "Unnamed_0.png";
+    for(int x = 0;;x++)  {	 
+	if (fs::exists(filename) ==  false) {
+	    t.copyToImage().saveToFile(filename);
+	    break;
+	}
+	filename.replace(8,1,std::to_string(x+1));
+    }
+}
 
 float bkc_x = 200;
 float bkc_y = 350;
@@ -28,11 +40,11 @@ int main() {
     if (!bckgrnd.loadFromFile("build/Untitled.png")) {
         return 1;
     }
-    // bckgrnd.setSrgb(false);
     bckgrnd_sprt.setTexture(bckgrnd);
-    
-    sf::RenderWindow window(sf::VideoMode(1280, 720),
-                            "Crappy paint clone , has only one brush");
+    sf::RenderWindow window(
+      sf::VideoMode(1280, 720),
+     "Crappy paint clone , has only one brush"
+    );
     window.setFramerateLimit(120);
     ImGui::SFML::Init(window);
     sf::Clock deltaClock;
@@ -40,7 +52,6 @@ int main() {
         sf::Event event;
         while (window.pollEvent(event)) {
             ImGui::SFML::ProcessEvent(event);
-
             if (event.type == sf::Event::Closed) {
                 window.close();
             }
@@ -50,10 +61,12 @@ int main() {
         if (ImGui::BeginMainMenuBar()) {
             if (ImGui::BeginMenu("File")) {
                 // File interaction
-                if (ImGui::MenuItem("Save")){  // a save button that saves, wow!
-
-                }
-                if(ImGui::MenuItem("Quit")){ //a quit button!
+                if (ImGui::MenuItem("Save")){  
+		    // a save button that saves, wow!
+		    file_save(bckgrnd);
+		}
+                if(ImGui::MenuItem("Quit")){ 
+		    //a quit button!
                     window.close();
                 }
                 ImGui::EndMenu();
@@ -69,7 +82,7 @@ int main() {
         ImGui::SliderInt("Red", &colors[0], 0, 255);
         ImGui::SliderInt("Green", &colors[1], 0, 255);
         ImGui::SliderInt("Blue", &colors[2], 0, 255);
-        ImGui::SliderInt("Aplha", &colors[3], 1, 255);
+       ImGui::SliderInt("Aplha", &colors[3], 1, 255);
         ImGui::SliderInt("Size", &brush_size, 1, 100);
         ImGui::End();
         
