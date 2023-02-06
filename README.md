@@ -1,9 +1,9 @@
 # sfPaint
 An attempt to make a paint clone in sfml( also while using Imgui)
 ## Prerequisites 
-SFML(>=2.5) \
-Cmake(>=3.0) \ 
-Ccache \
+SFML(>=2.5)\
+Cmake(>=3.0)\
+Ccache
 ## Install
 1. Clone the repo
 ```
