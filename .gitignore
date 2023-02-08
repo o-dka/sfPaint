@@ -47,4 +47,4 @@ _deps
 # Some things that I dont want to share
 /build/
 /imgui.ini
-
+/.cache/

@@ -1,16 +1,26 @@
+
+#include "brush.hpp"
+// #include "penTool.hpp"
+// #include "lineTool.hpp"
+// #include "rectangleTool.hpp"
+// #include "cutPasteTool.hpp"
+// #include "fillTool.hpp"
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/View.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Sprite.hpp>
-#include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/Window/Event.hpp>
-#include <SFML/Window/Mouse.hpp>
 #include <imgui-SFML.h>
 #include <imgui.h>
 #include <experimental/filesystem>
 #include <string>
 namespace fs = std::experimental::filesystem;
+
+
+
+
 void file_save(sf::Texture &t) {
     std::string filename = "Unnamed_0.png";
     for (int x = 0;; x++) {
@@ -24,19 +34,11 @@ void file_save(sf::Texture &t) {
 
 float bkc_x = 200;
 float bkc_y = 350;
-int brush_size = 10;
-int colors[4]{
-    0 // R
-    ,
-    120 // G
-    ,
-    0 // B
-    ,
-    100 // a (transparency)
-};
+
 int main() {
+    Brush *pen = new Brush();
     sf::Vector2i mousepos;
-    sf::RectangleShape brush;
+    // sf::RectangleShape brush;
     sf::Texture bckgrnd;
     sf::RectangleShape bckgrnd_box(sf::Vector2f(bkc_x, bkc_y));
     sf::Sprite bckgrnd_sprt;
@@ -66,6 +68,9 @@ int main() {
                     // a save button that saves, wow!
                     file_save(bckgrnd);
                 }
+                if (ImGui::MenuItem("Open")){
+                    // bckgrnd = file_open();
+                }
                 if (ImGui::MenuItem("Quit")) {
                     // a quit button!
                     window.close();
@@ -85,9 +90,14 @@ int main() {
         ImGui::SliderInt("Green", &colors[1], 0, 255);
         ImGui::SliderInt("Blue", &colors[2], 0, 255);
         ImGui::SliderInt("Aplha", &colors[3], 1, 255);
-        ImGui::SliderInt("Size", &brush_size, 1, 100);
+        ImGui::SliderInt("Size", pen->size(), 1, 100);
         ImGui::End();
-
+        ImGui::Begin("Brush type");
+        ImGui::Button("Line");
+        ImGui::Button("Brush");
+        ImGui::Button("Rectangle tool");
+        ImGui::Button("Fill tool");
+        ImGui::End();
         ImGui::Begin("Canvas Controls");
         ImGui::SliderFloat(" :X", &bkc_x, 1.f, 1280.f);
         ImGui::SliderFloat(" :Y", &bkc_y, 1.f, 720.f);
@@ -95,25 +105,7 @@ int main() {
         sf::Vector2i mousepos = sf::Mouse::getPosition(window);
         if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
             // drawing things
-            int pixel_arr_sz = (brush_size * brush_size) * 4;
-
-            sf::Uint8 pixels[pixel_arr_sz];
-            for (int i = 0; i != pixel_arr_sz - 4; i += 4) {
-                pixels[i] = colors[0];
-                pixels[i + 1] = colors[1];
-                pixels[i + 2] = colors[2];
-                pixels[i + 3] = colors[3];
-            }
-
-            if ((float(mousepos.x) < bckgrnd_box.getSize().x) &&
-                (float(mousepos.y) < bckgrnd_box.getSize().y)) {
-                bckgrnd.update(pixels,               //
-                               unsigned(brush_size), //
-                               unsigned(brush_size), //
-                               unsigned(mousepos.x) + 1,
-                               unsigned(mousepos.y) + 10);
-                bckgrnd_sprt.setTexture(bckgrnd);
-            }
+            pen->draw();
         }
         bckgrnd_box.setSize(sf::Vector2f(bkc_x, bkc_y));
         bckgrnd_sprt.setTextureRect(sf::IntRect(0, 0, int(bkc_x), int(bkc_y)));
@@ -123,10 +115,10 @@ int main() {
         if ((float(mousepos.x) < bckgrnd_box.getSize().x) &&
             (float(mousepos.y) < bckgrnd_box.getSize().y)) {
             // Brush things :P
-            brush.setPosition(sf::Vector2f(mousepos) + sf::Vector2f(10.f, 1.f));
-            brush.setFillColor(
+            pen.setPosition(sf::Vector2f(mousepos) + sf::Vector2f(10.f, 1.f));
+            pen.setFillColor(
                 sf::Color(colors[0], colors[1], colors[2], colors[3]));
-            brush.setSize(sf::Vector2f(float(brush_size), float(brush_size)));
+            brush.setSize(sf::Vector2f(float(pen.size()), float(pen.size())));
             window.draw(brush);
         }
         ImGui::SFML::Render(window);
