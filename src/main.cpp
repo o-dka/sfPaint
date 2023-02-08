@@ -10,26 +10,29 @@
 #include <imgui.h>
 #include <experimental/filesystem>
 #include <string>
-namespace fs= std::experimental::filesystem;
-void file_save(sf::Texture &t){
-    std::string filename  = "Unnamed_0.png";
-    for(int x = 0;;x++)  {	 
-	if (fs::exists(filename) ==  false) {
-	    t.copyToImage().saveToFile(filename);
-	    break;
-	}
-	filename.replace(8,1,std::to_string(x+1));
+namespace fs = std::experimental::filesystem;
+void file_save(sf::Texture &t) {
+    std::string filename = "Unnamed_0.png";
+    for (int x = 0;; x++) {
+        if (fs::exists(filename) == false) {
+            t.copyToImage().saveToFile(filename);
+            break;
+        }
+        filename.replace(8, 1, std::to_string(x + 1));
     }
 }
 
 float bkc_x = 200;
 float bkc_y = 350;
 int brush_size = 10;
-int colors[4]  {
-                0      // R
-                ,120   // G
-                ,0     // B
-                ,100   // a (transparency)
+int colors[4]{
+    0 // R
+    ,
+    120 // G
+    ,
+    0 // B
+    ,
+    100 // a (transparency)
 };
 int main() {
     sf::Vector2i mousepos;
@@ -41,10 +44,8 @@ int main() {
         return 1;
     }
     bckgrnd_sprt.setTexture(bckgrnd);
-    sf::RenderWindow window(
-      sf::VideoMode(1280, 720),
-     "Crappy paint clone , has only one brush"
-    );
+    sf::RenderWindow window(sf::VideoMode(1280, 720),
+                            "Crappy paint clone , has only one brush");
     window.setFramerateLimit(120);
     ImGui::SFML::Init(window);
     sf::Clock deltaClock;
@@ -61,43 +62,43 @@ int main() {
         if (ImGui::BeginMainMenuBar()) {
             if (ImGui::BeginMenu("File")) {
                 // File interaction
-                if (ImGui::MenuItem("Save")){  
-		    // a save button that saves, wow!
-		    file_save(bckgrnd);
-		}
-                if(ImGui::MenuItem("Quit")){ 
-		    //a quit button!
+                if (ImGui::MenuItem("Save")) {
+                    // a save button that saves, wow!
+                    file_save(bckgrnd);
+                }
+                if (ImGui::MenuItem("Quit")) {
+                    // a quit button!
                     window.close();
                 }
                 ImGui::EndMenu();
             }
-            if (ImGui::BeginMenu("Other")){
+            if (ImGui::BeginMenu("Other")) {
                 // Program info and stuff
                 ImGui::MenuItem("Help");
                 ImGui::MenuItem("About");
                 ImGui::EndMenu();
-            } ImGui::EndMainMenuBar();
+            }
+            ImGui::EndMainMenuBar();
         }
         ImGui::Begin("Brush Controls");
         ImGui::SliderInt("Red", &colors[0], 0, 255);
         ImGui::SliderInt("Green", &colors[1], 0, 255);
         ImGui::SliderInt("Blue", &colors[2], 0, 255);
-       ImGui::SliderInt("Aplha", &colors[3], 1, 255);
+        ImGui::SliderInt("Aplha", &colors[3], 1, 255);
         ImGui::SliderInt("Size", &brush_size, 1, 100);
         ImGui::End();
-        
+
         ImGui::Begin("Canvas Controls");
         ImGui::SliderFloat(" :X", &bkc_x, 1.f, 1280.f);
         ImGui::SliderFloat(" :Y", &bkc_y, 1.f, 720.f);
         ImGui::End();
         sf::Vector2i mousepos = sf::Mouse::getPosition(window);
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) 
-        {
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
             // drawing things
-            int  pixel_arr_sz=(brush_size * brush_size) * 4 ;
+            int pixel_arr_sz = (brush_size * brush_size) * 4;
 
             sf::Uint8 pixels[pixel_arr_sz];
-            for (int i = 0; i != pixel_arr_sz -4; i+=4) {
+            for (int i = 0; i != pixel_arr_sz - 4; i += 4) {
                 pixels[i] = colors[0];
                 pixels[i + 1] = colors[1];
                 pixels[i + 2] = colors[2];
@@ -123,7 +124,8 @@ int main() {
             (float(mousepos.y) < bckgrnd_box.getSize().y)) {
             // Brush things :P
             brush.setPosition(sf::Vector2f(mousepos) + sf::Vector2f(10.f, 1.f));
-            brush.setFillColor(sf::Color(colors[0], colors[1], colors[2],colors[3]));
+            brush.setFillColor(
+                sf::Color(colors[0], colors[1], colors[2], colors[3]));
             brush.setSize(sf::Vector2f(float(brush_size), float(brush_size)));
             window.draw(brush);
         }
