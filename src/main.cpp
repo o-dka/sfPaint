@@ -1,10 +1,7 @@
-
 #include "brush.hpp"
-// #include "penTool.hpp"
 // #include "lineTool.hpp"
 // #include "rectangleTool.hpp"
 // #include "cutPasteTool.hpp"
-// #include "fillTool.hpp"
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/View.hpp>
@@ -18,9 +15,6 @@
 #include <string>
 namespace fs = std::experimental::filesystem;
 
-
-
-
 void file_save(sf::Texture &t) {
     std::string filename = "Unnamed_0.png";
     for (int x = 0;; x++) {
@@ -31,14 +25,16 @@ void file_save(sf::Texture &t) {
         filename.replace(8, 1, std::to_string(x + 1));
     }
 }
-
+bool is_within_canvas(sf::Vector2i pointr_pos,sf::RectangleShape canvas){
+    return
+        float(pointr_pos.x) < canvas.getSize().x &&
+        float(pointr_pos.y) < canvas.getSize().y ;
+   
+}
 float bkc_x = 200;
 float bkc_y = 350;
 
-int main() {
-    Brush *pen = new Brush();
-    sf::Vector2i mousepos;
-    // sf::RectangleShape brush;
+int main() { 
     sf::Texture bckgrnd;
     sf::RectangleShape bckgrnd_box(sf::Vector2f(bkc_x, bkc_y));
     sf::Sprite bckgrnd_sprt;
@@ -46,9 +42,12 @@ int main() {
         return 1;
     }
     bckgrnd_sprt.setTexture(bckgrnd);
-    sf::RenderWindow window(sf::VideoMode(1280, 720),
-                            "Crappy paint clone , has only one brush");
+    sf::RenderWindow window(
+        sf::VideoMode(1280, 720),                   //
+        "Crappy paint clone , has only one brush"   //
+    );
     window.setFramerateLimit(120);
+    Brush *pen = new Brush(window); // Brush set
     ImGui::SFML::Init(window);
     sf::Clock deltaClock;
     while (window.isOpen()) {
@@ -65,7 +64,6 @@ int main() {
             if (ImGui::BeginMenu("File")) {
                 // File interaction
                 if (ImGui::MenuItem("Save")) {
-                    // a save button that saves, wow!
                     file_save(bckgrnd);
                 }
                 if (ImGui::MenuItem("Open")){
@@ -77,56 +75,50 @@ int main() {
                 }
                 ImGui::EndMenu();
             }
-            if (ImGui::BeginMenu("Other")) {
-                // Program info and stuff
-                ImGui::MenuItem("Help");
-                ImGui::MenuItem("About");
+            if (ImGui::BeginMenu("Brush Type")){
+                if (ImGui::MenuItem("Pen")) {/* Pen change code */ }
+                if (ImGui::MenuItem("Line")) { /*Line change code */}
+                if (ImGui::MenuItem("Rectangle")) { /*Rectangle change code */}
+                if (ImGui::MenuItem("Cut/Copy/Paste")) { /*Cut/Copy/Paste change code */}
                 ImGui::EndMenu();
             }
+                if (ImGui::BeginMenu("Other")) {
+                    // Program info and stuff
+                    ImGui::MenuItem("Help");
+                    ImGui::MenuItem("About");
+                    ImGui::EndMenu();
+                }
             ImGui::EndMainMenuBar();
         }
         ImGui::Begin("Brush Controls");
-        ImGui::SliderInt("Red", &colors[0], 0, 255);
-        ImGui::SliderInt("Green", &colors[1], 0, 255);
-        ImGui::SliderInt("Blue", &colors[2], 0, 255);
-        ImGui::SliderInt("Aplha", &colors[3], 1, 255);
-        ImGui::SliderInt("Size", pen->size(), 1, 100);
-        ImGui::End();
-        ImGui::Begin("Brush type");
-        ImGui::Button("Line");
-        ImGui::Button("Brush");
-        ImGui::Button("Rectangle tool");
-        ImGui::Button("Fill tool");
+        ImGui::SliderInt("Red", &pen->color[0], 0, 255);
+        ImGui::SliderInt("Green", &pen->color[1], 0, 255);
+        ImGui::SliderInt("Blue", &pen->color[2], 0, 255);
+        ImGui::SliderInt("Aplha", &pen->color[3], 1, 255);
+        ImGui::SliderInt("Size",&pen->size, 1, 100);
         ImGui::End();
         ImGui::Begin("Canvas Controls");
         ImGui::SliderFloat(" :X", &bkc_x, 1.f, 1280.f);
         ImGui::SliderFloat(" :Y", &bkc_y, 1.f, 720.f);
         ImGui::End();
-        sf::Vector2i mousepos = sf::Mouse::getPosition(window);
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-            // drawing things
-            pen->draw();
-        }
+        // canvas body resize and texture set
         bckgrnd_box.setSize(sf::Vector2f(bkc_x, bkc_y));
         bckgrnd_sprt.setTextureRect(sf::IntRect(0, 0, int(bkc_x), int(bkc_y)));
+        // painting!
+        if (is_within_canvas(pen->sf::Mouse::getPosition(), bckgrnd_box)) {
+            pen->paint(bckgrnd_box, bckgrnd, bckgrnd_sprt);
+            pen->pointer_draw(bckgrnd_box);
+        }
+        // drawing on the screen
         window.clear();
         window.draw(bckgrnd_box);
         window.draw(bckgrnd_sprt);
-        if ((float(mousepos.x) < bckgrnd_box.getSize().x) &&
-            (float(mousepos.y) < bckgrnd_box.getSize().y)) {
-            // Brush things :P
-            pen.setPosition(sf::Vector2f(mousepos) + sf::Vector2f(10.f, 1.f));
-            pen.setFillColor(
-                sf::Color(colors[0], colors[1], colors[2], colors[3]));
-            brush.setSize(sf::Vector2f(float(pen.size()), float(pen.size())));
-            window.draw(brush);
+        if (is_within_canvas(pen->sf::Mouse::getPosition(),bckgrnd_box)){
+            window.draw(*pen);
         }
         ImGui::SFML::Render(window);
-
         window.display();
     }
-
     ImGui::SFML::Shutdown();
-
     return 0;
 }
