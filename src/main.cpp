@@ -31,8 +31,8 @@ bool is_within_canvas(sf::Vector2i pointr_pos,sf::RectangleShape canvas){
         float(pointr_pos.y) < canvas.getSize().y ;
    
 }
-float bkc_x = 200;
-float bkc_y = 350;
+float bkc_x = 200.f;
+float bkc_y = 350.f;
 
 int main() { 
     sf::Texture bckgrnd;
@@ -42,9 +42,12 @@ int main() {
         return 1;
     }
     bckgrnd_sprt.setTexture(bckgrnd);
-    sf::RenderWindow window(
-        sf::VideoMode(1280, 720),                   //
-        "Crappy paint clone , has only one brush"   //
+    // sf::ContextSettings settings;
+    // settings.antialiasingLevel = zz;
+    sf::RenderWindow window(sf::VideoMode(1280, 720),                  //
+                            "Crappy paint clone , has only one brush" //
+                            // sf::Style::Default,                        //
+                            // settings                                   //
     );
     window.setFramerateLimit(120);
     Brush *pen = new Brush(window); // Brush set
@@ -76,7 +79,10 @@ int main() {
                 ImGui::EndMenu();
             }
             if (ImGui::BeginMenu("Brush Type")){
-                if (ImGui::MenuItem("Pen")) {/* Pen change code */ }
+                if (ImGui::MenuItem("Pen")) {
+                    // delete pen;
+                    /* Pen change code */
+                }
                 if (ImGui::MenuItem("Line")) { /*Line change code */}
                 if (ImGui::MenuItem("Rectangle")) { /*Rectangle change code */}
                 if (ImGui::MenuItem("Cut/Copy/Paste")) { /*Cut/Copy/Paste change code */}

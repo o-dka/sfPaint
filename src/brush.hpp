@@ -7,9 +7,8 @@
 class Brush : public sf::RectangleShape ,private sf::Mouse
 {
   private:
-    sf::Vector2i pos;
-    sf::Window *w = nullptr;
   public:
+    sf::Window *w = nullptr;
     Brush(sf::Window &win);
     ~Brush();
     int color[4] {
@@ -19,6 +18,6 @@ class Brush : public sf::RectangleShape ,private sf::Mouse
       255  // a (transparency)
     };
     int size;
-    virtual void pointer_draw(sf::RectangleShape canvas);
-    void paint(sf::RectangleShape canvas, sf::Texture &t, sf::Sprite s);
+    void pointer_draw(sf::RectangleShape canvas);
+    void paint(sf::RectangleShape &canvas, sf::Texture &t, sf::Sprite &s);
 };
