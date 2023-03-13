@@ -22,7 +22,8 @@ void file_save(sf::Texture &t) {
             t.copyToImage().saveToFile(filename);
             break;
         }
-        filename.replace(8, 1, std::to_string(x + 1));
+        else 
+            filename.replace(8, 1, std::to_string(x + 1));
     }
 }
 bool is_within_canvas(sf::Vector2i pointr_pos,sf::RectangleShape canvas){

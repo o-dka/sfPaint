@@ -7,6 +7,15 @@ add_library(
     src/brush.cpp
     src/brush.hpp
 )
-find_package(SFML 2.5 REQUIRED COMPONENTS graphics window system)
+add_library(
+    line
+    src/lineTool.cpp
+    src/lineTool.hpp
+)
+# find_package(SFML 2.5 REQUIRED COMPONENTS graphics window system)
 add_executable(sfPaint src/main.cpp)
-target_link_libraries(sfPaint PRIVATE  brush ImGui-SFML::ImGui-SFML stdc++fs)
+if (WIN32 AND BUILD_SHARED_LIBS)
+    add_custom_command(TARGET CMakeSFMLProject POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_RUNTIME_DLLS:CMakeSFMLProject> $<TARGET_FILE_DIR:CMakeSFMLProject> COMMAND_EXPAND_LISTS)
+endif()
+target_link_libraries(sfPaint PRIVATE line brush ImGui-SFML::ImGui-SFML stdc++fs)
