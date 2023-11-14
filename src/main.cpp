@@ -1,131 +1,175 @@
-#include "brush.hpp"
-// #include "lineTool.hpp"
-// #include "rectangleTool.hpp"
-// #include "cutPasteTool.hpp"
-#include <SFML/Graphics/RectangleShape.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/View.hpp>
-#include <SFML/Graphics/Texture.hpp>
-#include <SFML/Graphics/Sprite.hpp>
+// std libs
+ #include <iostream>
+// project libs
+#include "utils/general.hpp"
+#include "tools/Tool.hpp" 
+#include "tools/Pipet.hpp"
+#include "tools/Fill.hpp"
+
+// 3rd party libs
+#include <SFML/Graphics.hpp>
 #include <SFML/System/Clock.hpp>
-#include <SFML/Window/Event.hpp>
+#include <SFML/Window.hpp>
 #include <imgui-SFML.h>
 #include <imgui.h>
-#include <experimental/filesystem>
-#include <string>
-namespace fs = std::experimental::filesystem;
+#include "utils/imfilebrowser.h"
 
-void file_save(sf::Texture &t) {
-    std::string filename = "Unnamed_0.png";
-    for (int x = 0;; x++) {
-        if (fs::exists(filename) == false) {
-            t.copyToImage().saveToFile(filename);
-            break;
-        }
-        else 
-            filename.replace(8, 1, std::to_string(x + 1));
-    }
-}
-bool is_within_canvas(sf::Vector2i pointr_pos,sf::RectangleShape canvas){
-    return
-        float(pointr_pos.x) < canvas.getSize().x &&
-        float(pointr_pos.y) < canvas.getSize().y ;
-   
-}
-float bkc_x = 200.f;
-float bkc_y = 350.f;
+enum class CurTool {PEN = 1, PIPET = 2,FILL = 3};
+
+
 
 int main() { 
-    sf::Texture bckgrnd;
-    sf::RectangleShape bckgrnd_box(sf::Vector2f(bkc_x, bkc_y));
-    sf::Sprite bckgrnd_sprt;
-    if (!bckgrnd.loadFromFile("build/Untitled.png")) {
-        return 1;
+  
+  int size  = 1;
+
+  CurTool cur_tool;
+  Tool* cursor = new Tool;
+  
+  sf::Image pasted_garbo;
+  sf::Texture bckgrnd;
+  sf::Sprite bckgrnd_sprt;
+  static sf::Vector2f bkc (350.0f,650.0f); 
+
+  sf::RectangleShape bckgrnd_box(bkc);
+  sf::RenderWindow window(
+      sf::VideoMode(1280, 720),                       
+      "Paint clone",      
+      sf::Style::Default
+  );
+
+  window.setVerticalSyncEnabled(true);
+  fileOpen("Untitled.png",bckgrnd,bckgrnd_sprt);
+
+
+  
+  
+
+  if (!ImGui::SFML::Init(window)) {
+    std::abort();
+  }
+  // set both imgui windows 20 units away from the canvas on first launch and never again :p 
+  ImGui::SetNextWindowPos(ImVec2(bkc.x + 20,10),0); 
+  ImGui::FileBrowser filebrowser;
+  filebrowser.SetTitle("Open file");
+  filebrowser.SetTypeFilters ({ ".png" , ".jpg" , ".jpeg" });
+  sf::Clock deltaClock;
+  
+  while (window.isOpen()) {
+    sf::Event event;
+    while (window.pollEvent(event)) {
+      ImGui::SFML::ProcessEvent(event);
+      if (event.type == sf::Event::Closed) {
+        window.close();
+      }
+      if (event.type == sf::Event::Resized) { 
+        window.setSize(sf::Vector2u(event.size.width,event.size.height));
+      }
+      if (event.type == sf::Event::MouseButtonPressed && sf::Mouse::Button(sf::Mouse::Left)) {
+        sf::Vector2f cursor_pos = cursor->getPos(window);
+       while (
+            bckgrnd_box.getLocalBounds().contains(cursor_pos)
+            && !ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow)  
+            && !ImGui::IsAnyItemHovered() 
+           ) {   
+          cursor->posm.push_back(cursor_pos);
+      }
     }
-    bckgrnd_sprt.setTexture(bckgrnd);
-    // sf::ContextSettings settings;
-    // settings.antialiasingLevel = zz;
-    sf::RenderWindow window(sf::VideoMode(1280, 720),                  //
-                            "Crappy paint clone , has only one brush" //
-                            // sf::Style::Default,                        //
-                            // settings                                   //
-    );
-    window.setFramerateLimit(120);
-    Brush *pen = new Brush(window); // Brush set
-    ImGui::SFML::Init(window);
-    sf::Clock deltaClock;
-    while (window.isOpen()) {
-        sf::Event event;
-        while (window.pollEvent(event)) {
-            ImGui::SFML::ProcessEvent(event);
-            if (event.type == sf::Event::Closed) {
-                window.close();
-            }
-        }
-        ImGui::SFML::Update(window, deltaClock.restart());
-        // Create a Menu bar
-        if (ImGui::BeginMainMenuBar()) {
-            if (ImGui::BeginMenu("File")) {
-                // File interaction
-                if (ImGui::MenuItem("Save")) {
-                    file_save(bckgrnd);
-                }
-                if (ImGui::MenuItem("Open")){
-                    // bckgrnd = file_open();
-                }
-                if (ImGui::MenuItem("Quit")) {
-                    // a quit button!
-                    window.close();
-                }
-                ImGui::EndMenu();
-            }
-            if (ImGui::BeginMenu("Brush Type")){
-                if (ImGui::MenuItem("Pen")) {
-                    // delete pen;
-                    /* Pen change code */
-                }
-                if (ImGui::MenuItem("Line")) { /*Line change code */}
-                if (ImGui::MenuItem("Rectangle")) { /*Rectangle change code */}
-                if (ImGui::MenuItem("Cut/Copy/Paste")) { /*Cut/Copy/Paste change code */}
-                ImGui::EndMenu();
-            }
-                if (ImGui::BeginMenu("Other")) {
-                    // Program info and stuff
-                    ImGui::MenuItem("Help");
-                    ImGui::MenuItem("About");
-                    ImGui::EndMenu();
-                }
-            ImGui::EndMainMenuBar();
-        }
-        ImGui::Begin("Brush Controls");
-        ImGui::SliderInt("Red", &pen->color[0], 0, 255);
-        ImGui::SliderInt("Green", &pen->color[1], 0, 255);
-        ImGui::SliderInt("Blue", &pen->color[2], 0, 255);
-        ImGui::SliderInt("Aplha", &pen->color[3], 1, 255);
-        ImGui::SliderInt("Size",&pen->size, 1, 100);
-        ImGui::End();
-        ImGui::Begin("Canvas Controls");
-        ImGui::SliderFloat(" :X", &bkc_x, 1.f, 1280.f);
-        ImGui::SliderFloat(" :Y", &bkc_y, 1.f, 720.f);
-        ImGui::End();
-        // canvas body resize and texture set
-        bckgrnd_box.setSize(sf::Vector2f(bkc_x, bkc_y));
-        bckgrnd_sprt.setTextureRect(sf::IntRect(0, 0, int(bkc_x), int(bkc_y)));
-        // painting!
-        if (is_within_canvas(pen->sf::Mouse::getPosition(), bckgrnd_box)) {
-            pen->paint(bckgrnd_box, bckgrnd, bckgrnd_sprt);
-            pen->pointer_draw(bckgrnd_box);
-        }
-        // drawing on the screen
-        window.clear();
-        window.draw(bckgrnd_box);
-        window.draw(bckgrnd_sprt);
-        if (is_within_canvas(pen->sf::Mouse::getPosition(),bckgrnd_box)){
-            window.draw(*pen);
-        }
-        ImGui::SFML::Render(window);
-        window.display();
+
+    ImGui::SFML::Update(window, deltaClock.restart());
+    {
+      ImGui::Begin("Brush Controls");
+      ImGui::SliderInt3("Color",cursor->colors,0,255);
+      ImGui::SliderInt("Size", &size, 1, 4);
+      ImGui::End();
     }
-    ImGui::SFML::Shutdown();
-    return 0;
+    { 
+      ImGui::Begin("Canvas Controls");
+      ImGui::SliderFloat(" :X", &bkc.x, 1.f, 1280.f);
+      ImGui::SliderFloat(" :Y", &bkc.y, 1.f, 720.f);
+      ImGui::End();
+    }
+    // Create a Menu bar
+    if (ImGui::BeginMainMenuBar()) {
+      // File interaction
+      if (ImGui::BeginMenu("File")) {
+        if (ImGui::MenuItem("Save")) {
+          fileSave(bckgrnd);
+        }
+        if (ImGui::MenuItem("Open")) {
+          filebrowser.Open();
+          if (filebrowser.HasSelected()) {
+            std::string selected_file = filebrowser.GetSelected().string();
+            if ( fileOpen(selected_file,bckgrnd,bckgrnd_sprt)) {
+              filebrowser.ClearSelected();
+              filebrowser.Close();
+            }
+            else {
+              std::printf("UNABLE TO OPEN FILE : \" %s \"",selected_file.c_str());
+              filebrowser.Close();
+            }
+          }
+        }
+        if (ImGui::MenuItem("Quit")) {window.close();}
+        ImGui::EndMenu();
+      }
+      if (ImGui::BeginMenu("Brush Type")) {
+        if (ImGui::MenuItem("Pen")) {
+          cur_tool = CurTool::PEN ;
+        }
+        if (ImGui::MenuItem("Fill bucket")) {
+          cur_tool = CurTool::FILL ;
+        }
+        
+        if (ImGui::MenuItem("Cut/Copy/Paste/Pipet")) { 
+          cur_tool = CurTool::PIPET;
+        }
+        ImGui::EndMenu();
+      }
+      ImGui::EndMainMenuBar();
+    }
+   
+    // Application operations 
+    //  What fucns to use? 
+    sf::Sprite in_s;
+    switch (cur_tool)
+    {
+    case CurTool::PEN:
+      in_s = cursor->getSprite();
+      copyToTex(bckgrnd,in_s,bckgrnd_sprt,size,cursor->posm);
+      break;
+    case CurTool::FILL:
+      FloodFill(bckgrnd_sprt,bckgrnd,,{cursor->colors[0],cursor->colors[1],cursor->colors[2],255},{cursor->getPos().x,cursor->getPos().y});
+      break;
+    case CurTool::PIPET: 
+      pasted_garbo = copyPixels();
+      pastePixels();
+      pasted_garbo = cutPixels();
+      setColorFromPos();
+      break;
+    }
+      
+     
+  
+    // canvas resize
+    bckgrnd_box.setSize(bkc);
+    bckgrnd_sprt.setTextureRect(sf::IntRect(0, 0, int(bkc.x),int(bkc.y)));
+
+    // drawing on the screen
+    window.clear();
+    window.draw(bckgrnd_box);
+    window.draw(bckgrnd_sprt);
+    
+    
+    if (bckgrnd_box.getLocalBounds().contains(cursor->getPos(window))
+        && !ImGui::IsWindowHovered(ImGuiHoveredFlags_None)  
+        && !ImGui::IsAnyItemHovered()) {
+      cursor->Render(window);
+    }
+    filebrowser.Display();
+    ImGui::SFML::Render(window);
+    window.display();
+  }
+  }
+  ImGui::SFML::Shutdown();
+  return 0;
 }
