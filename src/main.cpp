@@ -35,7 +35,7 @@ int main() {
   sf::RectangleShape box(bkc);
   sf::RenderWindow window(
       sf::VideoMode(1280, 720),                       
-      "Paint clone",      
+      "Paint",      
       sf::Style::Default
   );
   Tool cursor(window);
