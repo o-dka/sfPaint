@@ -1,14 +1,5 @@
-#include "Pipet.hpp"
+#include "Copy.hpp"
 
-void setColorFromPos (const sf::Texture &t,int *a_colors,sf::Vector2f &pos){
-  auto [r,g,b,a] = t.copyToImage().getPixel(
-    pos.x,
-    pos.y
-  );
-  a_colors[0] = r;
-  a_colors[1] = g;
-  a_colors[2] = b;
-}
 
 sf::Image copyPixels(const sf::Texture &t, sf::Vector2f *a) {
   sf::Vector2i a_int[2];

@@ -1,6 +1,5 @@
-
 add_library(
-  Tool  SHARED
+  Tool  
   Tool.cpp
   Tool.hpp
 )
@@ -15,8 +14,7 @@ add_library(
   Fill.hpp
 )
 add_library(
-  Pipet
-  Pipet.cpp
-  Pipet.hpp
+  Copy
+  Copy.cpp
+  Copy.hpp
 )
-

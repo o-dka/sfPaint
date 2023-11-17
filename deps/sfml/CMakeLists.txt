@@ -1,4 +1,4 @@
-message(STATUS "Fetching SFML 2.5.1....")
+message(STATUS "Fetching SFML ....")
 set(SFML_BUILD_AUDIO FALSE)
 set(SFML_BUILD_NETWORK FALSE)
 

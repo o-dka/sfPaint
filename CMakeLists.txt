@@ -18,9 +18,8 @@ add_library(
 
 add_executable(sfPaint src/main.cpp)
 
-
 add_subdirectory(src/tools)
 
 link_libraries(imfilebrowser ImGui-SFML::ImGui-SFML)
 
-target_link_libraries(sfPaint PUBLIC gen_utils ImGui-SFML::ImGui-SFML stdc++fs imfilebrowser  Tool Pen Fill Pipet )
+target_link_libraries(sfPaint PUBLIC gen_utils ImGui-SFML::ImGui-SFML stdc++fs imfilebrowser Tool Pen Fill Copy )

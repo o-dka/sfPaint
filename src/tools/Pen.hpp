@@ -1,7 +1,4 @@
 #pragma once
-
-#include <vector>
-
 #include "SFML-Includes.hpp"
 
-void copyToTex(sf::Texture &t,sf::Sprite &in_s,sf::Sprite &s,int &size,std::vector<sf::Vector2f> & vof_vf);
+void Pen(sf::Texture &t, sf::Vector2i &pos,sf::Uint8 *c);

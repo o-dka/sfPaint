@@ -1,17 +1,15 @@
 #include "Pen.hpp"
-void copyToTex(sf::Texture &t,sf::Sprite &in_s,sf::Sprite &s,int &size,std::vector<sf::Vector2f> & vof_vf)
-{
-    in_s.setScale(size,size);
-    const sf::Uint8 *cursor = in_s.getTexture()->copyToImage().getPixelsPtr();    
-    for (auto a : vof_vf) {
-        t.update( 
-            cursor,
-            size,
-            size,
-            unsigned(a.x),
-            unsigned(a.y)
-        );
-    }
-    s.setTexture(t);
-    
+void Pen(sf::Texture &t, sf::Vector2i &pos,sf::Uint8 *c) {  
+  // Algorithm:
+  // 1. pass an array of Uint8 that has the same colour as the pointer
+  // 2. fill an Uint8 array of pixels with corresponding color
+  sf::Uint8 pixel_region[36*4];
+  for (size_t i = 0  ;i <= 36;i++) {
+        pixel_region[i * 4] = c[0];
+        pixel_region[i * 4+1] = c[1];
+        pixel_region[i * 4+2] = c[2];
+        pixel_region[i * 4+3] = c[3];
+  }
+  // 4. update the texture
+  t.update( pixel_region,6,6,pos.x,pos.y);  
 }

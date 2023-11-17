@@ -1,6 +1,6 @@
 #include "Fill.hpp"
 
-void Fill::FloodFill(sf::Sprite &s,sf::Texture &t ,sf::Color &target,sf::Color &replace,sf::Vector2u &strt_pos)
+void FloodFill(sf::Sprite &s,sf::Texture &t ,sf::Color &target,sf::Color &replace,sf::Vector2u &strt_pos)
 {
   // https://en.wikipedia.org/wiki/Flood_fill#Stack-based_recursive_implementation_(four-way)
 
@@ -42,9 +42,10 @@ void Fill::FloodFill(sf::Sprite &s,sf::Texture &t ,sf::Color &target,sf::Color &
         q_pixels.push(pixel);
     }
   }
+  s.setTexture(t);
 }
 
-bool Fill::isValid(const sf::Color &cur_pixel_color, const sf::Color &target, const sf::Color &replace, bool contained) {
+bool isValid(const sf::Color &cur_pixel_color, const sf::Color &target, const sf::Color &replace, bool contained) {
   if (contained && cur_pixel_color == target &&  cur_pixel_color != replace) {
     return true;
   }
